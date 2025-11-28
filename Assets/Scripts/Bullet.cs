@@ -52,7 +52,12 @@ public class Bullet : MonoBehaviour
                 }
 
                 // Hancurkan Musuh
-                Destroy(hitInfo.gameObject);
+                if (AudioManager.instance != null)
+                {
+                    // Panggil suara ledakan karena musuh mati ditembak
+                    AudioManager.instance.PlaySFX(AudioManager.instance.explodeClip);
+                }
+                enemyScript.Die();
             }
 
             // Hancurkan peluru itu sendiri setelah menabrak target

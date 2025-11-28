@@ -130,9 +130,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   scoreValue: 10
-  moveSpeed: 40
+  moveSpeed: 50
   fireRate: 0
   crashDamage: 1
+  explosionEffect: {fileID: 7329314709724808224, guid: 6155d72c11bb5774881160158469990f, type: 3}
   useTripleShot: 0
   spreadAngle: 15
   enemyBulletPrefab: {fileID: 5933668142665177043, guid: 0133847185320854ebe4f1c3ee2f655a, type: 3}

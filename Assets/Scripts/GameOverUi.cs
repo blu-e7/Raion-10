@@ -7,6 +7,10 @@ public class GameOverUI : MonoBehaviour
     public void RestartGame()
     {
         // Memuat ulang scene yang sedang aktif saat ini
+        if (MusicManager.instance != null)
+        {
+            MusicManager.instance.ResetVolume();
+        }
         SceneManager.LoadScene(SceneManager.GetActiveScene().name);
         
         // Pastikan waktu berjalan lagi (siapa tahu tadi di-pause saat game over)
@@ -17,6 +21,10 @@ public class GameOverUI : MonoBehaviour
     public void LoadMainMenu()
     {
         // Ganti "MainMenu" dengan nama file scene menu kamu nanti
+        if (MusicManager.instance != null)
+        {
+            MusicManager.instance.ResetVolume();
+        }
         SceneManager.LoadScene("MainMenu");
         
         Time.timeScale = 1f;

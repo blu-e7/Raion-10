@@ -11,6 +11,9 @@ public class Enemy : MonoBehaviour
     
     private float fireCountdown = 0f;
 
+    [Header("Effects")]
+    public GameObject explosionEffect;
+
     [Header("Tipe Serangan")]
     public bool useTripleShot = false; 
     public float spreadAngle = 15f; 
@@ -27,7 +30,10 @@ public class Enemy : MonoBehaviour
     void Update()
     {
         transform.Translate(moveDirection * moveSpeed * Time.deltaTime);
-
+        if (GameManager.instance != null && GameManager.instance.isGameOver)
+        {
+            return; // Berhenti memproses kode di bawahnya
+        }
         fireCountdown -= Time.deltaTime;
         if (fireCountdown <= 0f)
         {
@@ -46,12 +52,23 @@ public class Enemy : MonoBehaviour
 
             if (useTripleShot)
             {
+                if (AudioManager.instance != null)
+                {
+                
+                    AudioManager.instance.PlaySFX(AudioManager.instance.tripleshootClip);
+                }
                 CreateBullet(spawnPosition, baseAngle);
                 CreateBullet(spawnPosition, baseAngle - spreadAngle);
                 CreateBullet(spawnPosition, baseAngle + spreadAngle);
             }
             else
             {
+                if (AudioManager.instance != null)
+                {
+                    // Kita gunakan klip yang sama dengan player (shootClip) 
+                    // atau kamu bisa buat variabel baru 'enemyShootClip' di AudioManager jika mau beda suara.
+                    AudioManager.instance.PlaySFX(AudioManager.instance.enemyshootClip);
+                }
                 CreateBullet(spawnPosition, baseAngle);
             }
         }
@@ -63,6 +80,23 @@ public class Enemy : MonoBehaviour
         Instantiate(enemyBulletPrefab, pos, rotation);
     }
 
+    public void Die()
+    {
+        // 1. Munculkan efek ledakan di posisi musuh
+        if (explosionEffect != null)
+        {
+            Instantiate(explosionEffect, transform.position, transform.rotation);
+        }
+
+        // 2. Mainkan suara ledakan
+        if (AudioManager.instance != null)
+        {
+            AudioManager.instance.PlaySFX(AudioManager.instance.explodeClip);
+        }
+
+        // 3. Hancurkan Musuh
+        Destroy(gameObject);
+    }
     // --- BAGIAN BARU: DETEKSI TABRAKAN BADAN ---
     private void OnTriggerEnter2D(Collider2D other)
     {
@@ -79,7 +113,11 @@ public class Enemy : MonoBehaviour
             }
 
             // 3. Hancurkan musuh ini (karena sudah nabrak, dia meledak/mati)
-            Destroy(gameObject);
+            if (AudioManager.instance != null)
+            {
+                AudioManager.instance.PlaySFX(AudioManager.instance.explodeClip);
+            }
+            Die();
         }
     }
 

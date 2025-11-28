@@ -129,8 +129,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dc4b150d1bd4d664d924de22e55dcfab, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  scoreValue: 10
   moveSpeed: 5
   fireRate: 0.5
+  crashDamage: 1
+  explosionEffect: {fileID: 7329314709724808224, guid: 6155d72c11bb5774881160158469990f, type: 3}
   useTripleShot: 1
   spreadAngle: 15
   enemyBulletPrefab: {fileID: 5933668142665177043, guid: 0133847185320854ebe4f1c3ee2f655a, type: 3}

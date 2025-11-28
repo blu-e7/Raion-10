@@ -19,6 +19,10 @@ public class PlayerShooting : MonoBehaviour
     {
         // Kita tambahkan rotasi -90 derajat agar peluru "tidur" (Horizontal)
         // Jika masih salah arah, coba ganti -90f menjadi 90f
+        if (AudioManager.instance != null)
+        {
+            AudioManager.instance.PlaySFX(AudioManager.instance.shootClip);
+        }
         Quaternion rotationCorrection = transform.rotation * Quaternion.Euler(0, 0, -90f);
 
         Instantiate(bulletPrefab, firePoint.position, rotationCorrection);

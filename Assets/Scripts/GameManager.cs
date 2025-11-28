@@ -8,6 +8,7 @@ public class GameManager : MonoBehaviour
     [Header("UI References")]
     public Text scoreText;
     public Text hpText;
+    public bool isGameOver = false;
 
     private int currentScore = 0;
 

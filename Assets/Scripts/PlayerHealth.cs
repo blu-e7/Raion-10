@@ -4,7 +4,7 @@ using System.Collections; // Wajib ada untuk IEnumerator
 public class PlayerHealth : MonoBehaviour
 {
     [Header("Pengaturan Nyawa")]
-    public int maxHealth = 3; // Total nyawa awal
+    public int maxHealth = 3; 
     private int currentHealth;
 
     [Header("Immunity (Kekebalan)")]
@@ -17,14 +17,16 @@ public class PlayerHealth : MonoBehaviour
     private bool isImmune = false;
     private SpriteRenderer spriteRenderer;
 
-    [Header("UI & Game Over")]
+    [Header("Effects & UI")]
     public GameObject gameOverCanvas; // Drag Canvas Game Over kesini
+    public GameObject explosionEffect; // [BARU] Drag Prefab Explosion kesini
 
     void Start()
     {
         currentHealth = maxHealth;
         
         // Ambil komponen gambar untuk efek kedip
+        // Jika gambarmu ada di anak object, gunakan GetComponentInChildren<SpriteRenderer>()
         spriteRenderer = GetComponent<SpriteRenderer>();
 
         // Pastikan layar Game Over mati saat mulai
@@ -53,6 +55,12 @@ public class PlayerHealth : MonoBehaviour
             GameManager.instance.UpdateHP(currentHealth);
         }
 
+        // MAINKAN SUARA KENA HIT
+        if (AudioManager.instance != null)
+        {
+            AudioManager.instance.PlaySFX(AudioManager.instance.hitClip);
+        }
+
         // 3. Cek Mati atau Kebal
         if (currentHealth <= 0)
         {
@@ -70,7 +78,6 @@ public class PlayerHealth : MonoBehaviour
     {
         isImmune = true;
         
-        // Loop selama durasi immunity belum habis
         float timer = 0f;
         while (timer < immunityDuration)
         {
@@ -90,7 +97,6 @@ public class PlayerHealth : MonoBehaviour
         isImmune = false;
     }
 
-    // Fungsi pembantu untuk ubah transparansi gambar
     void SetPlayerTransparency(float alpha)
     {
         if (spriteRenderer != null)
@@ -104,14 +110,42 @@ public class PlayerHealth : MonoBehaviour
     void Die()
     {
         Debug.Log("Player Mati!");
+
+        // 1. [BARU] MUNCULKAN VISUAL LEDAKAN
+        if (explosionEffect != null)
+        {
+            Instantiate(explosionEffect, transform.position, transform.rotation);
+        }
+
+        // 2. [BARU] MAINKAN SUARA LEDAKAN & KALAH
+        if (AudioManager.instance != null)
+        {
+            // Suara ledakan fisik
+            AudioManager.instance.PlaySFX(AudioManager.instance.explodeClip);
+            
+            // Suara Game Over (Lose Clip)
+            AudioManager.instance.PlaySFX(AudioManager.instance.loseClip);
+        }
+
+        // 3. SET STATUS GAME OVER (Agar musuh berhenti nembak)
+        if (GameManager.instance != null)
+        {
+            GameManager.instance.isGameOver = true;
+        }
+
+        // 4. KECILKAN VOLUME MUSIK
+        if (MusicManager.instance != null)
+        {
+            MusicManager.instance.LowerVolume();
+        }
         
-        // Munculkan layar Game Over
+        // 5. MUNCULKAN LAYAR GAME OVER
         if (gameOverCanvas != null)
         {
             gameOverCanvas.SetActive(true);
         }
 
-        // Hancurkan Player
+        // 6. HANCURKAN PLAYER
         Destroy(gameObject);
     }
 }
